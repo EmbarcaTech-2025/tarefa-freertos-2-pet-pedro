@@ -37,7 +37,14 @@ pico_sdk_init()
 
 add_executable(embarcatech-tarefa-freertos-2
     main.c
+    src/driver1306.c
+    src/font.c
+    src/i2c.c
+    src/gpio.c
 )
+
+pico_enable_stdio_uart(embarcatech-tarefa-freertos-2 0)
+pico_enable_stdio_usb(embarcatech-tarefa-freertos-2 1)
 
 target_include_directories(embarcatech-tarefa-freertos-2 PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
@@ -51,7 +58,3 @@ target_link_libraries(embarcatech-tarefa-freertos-2
     )
 
 pico_add_extra_outputs(embarcatech-tarefa-freertos-2)
-
-# if you have anything in "lib" folder then uncomment below - remember to add a CMakeLists.txt
-# file to the "lib" directory
-#add_subdirectory(lib)
