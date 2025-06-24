@@ -41,6 +41,8 @@ add_executable(embarcatech-tarefa-freertos-2
     src/font.c
     src/i2c.c
     src/gpio.c
+    src/adc.c
+    src/joystick.c
 )
 
 pico_enable_stdio_uart(embarcatech-tarefa-freertos-2 0)
@@ -55,6 +57,7 @@ target_link_libraries(embarcatech-tarefa-freertos-2
     pico_stdlib 
     FreeRTOS-Kernel-Heap4 
     hardware_i2c
+    hardware_adc
     )
 
 pico_add_extra_outputs(embarcatech-tarefa-freertos-2)
