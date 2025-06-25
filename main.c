@@ -9,12 +9,12 @@
 /****************************
 *         DEFINES
 ****************************/
-#define JOYSTICK_THRESHOLD 20
+#define JOYSTICK_THRESHOLD 30
 
 /****************************
 *         TYPEDEF
 ****************************/
-typedef union
+typedef struct
 {
   int x; /* -1, 0 or 1 */
   int y; /* -1, 0 or 1 */
@@ -27,7 +27,53 @@ D1306_t * gDisplay;
 bool gStateButtonA;
 bool gStateButtonB;
 JOYSTICK_POS_t gStateJoystick;
-int snake[2] = {10,10};
+int spaceship_x = 0;
+int spaceship_y = 50;
+extern int map[][2];
+extern int contour[][2];
+extern int spaceship[][2];
+
+/****************************
+*         FUNCTIONS
+****************************/
+void _DRAW_Map()
+{
+  for(int i = 0; i < 3178; i++ )
+  {
+      D1306_DrawPixel( gDisplay , map[i][0] , map[i][1] );
+  }
+}
+
+void _DRAW_SpaceShip()
+{
+  for(int i = 0; i < 43; i++ )
+  {
+      D1306_DrawPixel( gDisplay , spaceship[i][0] + spaceship_x , spaceship[i][1] + spaceship_y );
+  }
+}
+
+void _CLEAR_SpaceShip()
+{
+  for(int i = 0; i < 43; i++ )
+  {
+      D1306_ClearPixel( gDisplay , spaceship[i][0] + spaceship_x , spaceship[i][1] + spaceship_y );
+  }
+}
+
+bool _CHECK_Colision()
+{
+  for(int i = 0; i < 43; i++ )
+  {
+    for(int j = 0; i < 138; i++ )
+    {
+      if( spaceship[i][0] == contour[j][0] && spaceship[i][1] == contour[j][1])
+      {
+        return true;
+      }
+    }
+  }
+  return false;
+}
 
 /****************************
 *         TASKS
@@ -51,7 +97,12 @@ void TASK_Display()
 
   while (true) 
   {
-    D1306_DrawPixel( gDisplay , snake[0] , snake[1] );
+    _DRAW_Map();
+    _DRAW_SpaceShip();
+    if( _CHECK_Colision() )
+    {
+        //DO SOMETHING
+    }
     D1306_Show( gDisplay );
     vTaskDelay(100);
     D1306_Clear( gDisplay );
@@ -102,7 +153,7 @@ void TASK_Joystick()
   while(1)
   {
     JOYSTICK_Update( joystick );
-    if( joystick->pos_x > 255 - JOYSTICK_THRESHOLD )
+    if( joystick->pos_x > (255 - JOYSTICK_THRESHOLD) )
     {
       gStateJoystick.x = 1;
     }
@@ -115,13 +166,13 @@ void TASK_Joystick()
       gStateJoystick.x = 0;
     }
 
-    if( joystick->pos_y > 255 - JOYSTICK_THRESHOLD )
+    if( joystick->pos_y > (255 - JOYSTICK_THRESHOLD) )
     {
-      gStateJoystick.y = 1;
+      gStateJoystick.y = -1;
     }
     else if( joystick->pos_y < JOYSTICK_THRESHOLD )
     {
-      gStateJoystick.y = -1;
+      gStateJoystick.y = 1;
     }
     else
     {
@@ -138,8 +189,8 @@ void TASK_Game()
 {
   while(true)
   {
-    snake[0] += gStateJoystick.x;
-    snake[1] += gStateJoystick.y;
+    spaceship_x += gStateJoystick.x;
+    spaceship_y += gStateJoystick.y;
     vTaskDelay(100);
   }
 }
