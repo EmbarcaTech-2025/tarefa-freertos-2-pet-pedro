@@ -43,6 +43,7 @@ add_executable(embarcatech-tarefa-freertos-2
     src/gpio.c
     src/adc.c
     src/joystick.c
+    map.c
 )
 
 pico_enable_stdio_uart(embarcatech-tarefa-freertos-2 0)
